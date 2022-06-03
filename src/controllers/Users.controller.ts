@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
 import jwt from "jsonwebtoken";
+import { Prisma } from "@prisma/client";
 
 import { UsersService } from "../services/Users.service";
 import { UsersRepository } from "../repository/Users.repository";
 import { AppError } from "../errors/App.error";
-import { Prisma } from "@prisma/client";
 
 const KEY = process.env.KEY;
 
@@ -37,7 +37,6 @@ export class UserController {
       });
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
-        console.log(error);
         switch (error.code) {
           case "P2002": {
             return response.status(400).json({
@@ -57,7 +56,6 @@ export class UserController {
     const { email, password } = request.body;
     const usersRepository = new UsersRepository();
     const usersService = new UsersService(usersRepository);
-
     if (!email || !password) {
       return response.status(400).json({
         message: "Email or password as missing a type",

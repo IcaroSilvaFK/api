@@ -1,21 +1,27 @@
 import { Request, Response } from "express";
+import jwt from "jsonwebtoken";
 import { TweetsRepository } from "../repository/Tweets.repository";
 import { TweetsService } from "../services/Tweets.service";
 
+const KEY = process.env.KEY;
+
 export class TweetsController {
   static async create(request: Request, response: Response) {
-    const { id, tweet } = request.body;
+    const { token, tweet } = request.body;
     const tweetsRepository = new TweetsRepository();
     const tweetsService = new TweetsService(tweetsRepository);
 
-    if (!id || !tweet) {
+    if (!token || !tweet) {
       return response.status(400).json({
         message: "Id or Tweet as missing a type",
       });
     }
 
     try {
-      const newTweet = tweetsService.create({
+      const { id }: jwt.UserIDJwtPayload = <jwt.UserIDJwtPayload>(
+        jwt.verify(token, KEY as string)
+      );
+      const newTweet = await tweetsService.create({
         id,
         tweet,
       });
