@@ -14,7 +14,9 @@ model User{
   email       String @unique
   avatarUrl   String? 
   password  String
+  createdAt DateTime @default(now()) @map("created_at")
   userName    String @map("user_name") @unique
+  name  String
   tweet       Tweet[]
   likeds      Likeds[]
   @@map("users")

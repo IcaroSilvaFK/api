@@ -12,5 +12,6 @@ routes.post("/tweets", TweetsController.create);
 routes.get("/tweets", TweetsController.getAll);
 routes.post("/create", UserController.create);
 routes.post("/signup", UserController.login);
+routes.post("/image", UserController.updateImage);
 
 export { routes };

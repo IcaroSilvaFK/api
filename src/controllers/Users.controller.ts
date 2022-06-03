@@ -10,18 +10,23 @@ const KEY = process.env.KEY;
 
 export class UserController {
   static async create(request: Request, response: Response) {
-    const { email, username, password } = request.body;
+    const { email, username, password, name } = request.body;
     const usersRepository = new UsersRepository();
     const usersService = new UsersService(usersRepository);
 
-    if (!email || !username || !password) {
+    if (!email || !username || !password || !name) {
       return response.status(400).json({
         message: "Email or Username as missing a type",
       });
     }
 
     try {
-      const user = await usersService.create({ email, username, password });
+      const user = await usersService.create({
+        email,
+        username,
+        password,
+        name,
+      });
 
       const token = jwt.sign(
         {
@@ -32,7 +37,13 @@ export class UserController {
       );
 
       return response.status(201).json({
-        user,
+        user: {
+          avatarUrl: user.avatarUrl,
+          email: user.email,
+          userName: user.userName,
+          name: user.name,
+          createdAt: user.createdAt,
+        },
         token,
       });
     } catch (error) {
@@ -68,6 +79,8 @@ export class UserController {
         email: userEmail,
         id,
         userName,
+        name,
+        createdAt,
       } = await usersService.login({ email, password });
 
       const token = jwt.sign(
@@ -83,6 +96,8 @@ export class UserController {
           avatarUrl,
           email: userEmail,
           userName,
+          name,
+          createdAt,
         },
         token,
       });
@@ -93,5 +108,22 @@ export class UserController {
         });
       }
     }
+  }
+
+  static async updateImage(request: Request, response: Response) {
+    const { image, id } = request.body;
+    const usersRepository = new UsersRepository();
+    const usersService = new UsersService(usersRepository);
+    console.log({ image, id });
+    if (!image || !id) {
+      return response.status(400).json({
+        message: "Image or id as missing a type",
+      });
+    }
+
+    try {
+      const userImage = await usersService.updateImage(image, id);
+      return response.status(200).json(userImage);
+    } catch (error) {}
   }
 }

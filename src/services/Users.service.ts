@@ -7,14 +7,15 @@ interface INewUser {
   username: string;
   email: string;
   password: string;
+  name: string;
 }
 
-type UserLogin = Omit<INewUser, "username">;
+type UserLogin = Omit<INewUser, "username" | "name">;
 export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
 
-  async create({ email, username, password }: INewUser) {
-    return this.userRepository.create({ email, username, password });
+  async create({ email, username, password, name }: INewUser) {
+    return this.userRepository.create({ email, username, password, name });
   }
 
   async login({ email, password }: UserLogin) {
@@ -29,5 +30,9 @@ export class UsersService {
       throw new AppError("Password or email is incorret", 400);
     }
     return user;
+  }
+
+  async updateImage(image: string, id: string) {
+    return this.userRepository.updateImage({ image, id });
   }
 }
