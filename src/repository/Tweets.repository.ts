@@ -16,4 +16,14 @@ export class TweetsRepository {
 
     return newTweet;
   }
+  async getAll() {
+    const tweets = await prisma.tweet.findMany({
+      include: {
+        likeds: true,
+        user: true,
+      },
+    });
+
+    return tweets;
+  }
 }

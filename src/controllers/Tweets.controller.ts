@@ -27,4 +27,19 @@ export class TweetsController {
       });
     }
   }
+
+  static async getAll(request: Request, response: Response) {
+    const tweetsRepository = new TweetsRepository();
+    const tweetsService = new TweetsService(tweetsRepository);
+
+    try {
+      const tweets = await tweetsService.getAll();
+
+      return response.status(200).json(tweets);
+    } catch (error) {
+      return response.status(500).json({
+        message: "Internal server error",
+      });
+    }
+  }
 }

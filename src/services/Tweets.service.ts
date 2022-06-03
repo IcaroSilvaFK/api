@@ -13,4 +13,10 @@ export class TweetsService {
 
     return newTweet;
   }
+
+  async getAll() {
+    const tweets = await this.tweetsRepository.getAll();
+
+    return tweets;
+  }
 }

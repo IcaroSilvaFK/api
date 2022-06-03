@@ -10,22 +10,35 @@ datasource db {
 
 
 model User{
-  id String @id @default(uuid())
-  email String
-  userName String @map("user_name")
-  tweet Tweet[]
-
+  id          String @id @default(uuid())
+  email       String @unique
+  avatarUrl   String? 
+  password  String
+  userName    String @map("user_name") @unique
+  tweet       Tweet[]
+  likeds      Likeds[]
   @@map("users")
 }
 
 
 model Tweet{
-  id String @id @default(uuid())
-  tweet String
-  user_id String
-  user User @relation(fields: [user_id], references: [id])
+  id        String @id @default(uuid())
+  tweet     String
+  user_id   String
+
+  user      User @relation(fields: [user_id], references: [id])
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
+  likeds    Likeds?
   
   @@map("tweets")
+}
+
+model Likeds{
+  id        String @id @default(uuid())
+  user_id   String
+  tweet_id  String
+  quantity  Int @default(0)
+  tweet     Tweet @relation(fields: [tweet_id], references: [id])
+  user      User @relation(fields: [user_id], references: [id])
 }
