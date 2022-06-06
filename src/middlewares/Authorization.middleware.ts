@@ -8,19 +8,21 @@ export function authorizationMiddleware(
   response: Response,
   next: NextFunction
 ) {
-  try {
-    const [, token] = request.headers.authorization!.split(" ");
+  const autheticationToken = request.headers.authorization;
 
-    if (!token) {
-      return response.status(401).json({
-        message: "Unauthorized",
-      });
-    }
-    jwt.verify(token, KEY as string);
-    next();
-  } catch (error) {
+  if (!autheticationToken) {
     return response.status(401).json({
       message: "Unauthorized",
+    });
+  }
+  try {
+    const [, token] = autheticationToken.split(" ");
+
+    jwt.verify(token, KEY as string);
+    return next();
+  } catch (error) {
+    return response.status(401).json({
+      message: "Token invalid",
     });
   }
 }
