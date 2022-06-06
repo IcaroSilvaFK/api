@@ -98,6 +98,7 @@ export class UserController {
           userName,
           name,
           createdAt,
+          id,
         },
         token,
       });
@@ -125,5 +126,26 @@ export class UserController {
       const userImage = await usersService.updateImage(image, id);
       return response.status(200).json(userImage);
     } catch (error) {}
+  }
+
+  static async getUser(request: Request, response: Response) {
+    const { id } = request.params;
+    const usersRepository = new UsersRepository();
+    const usersService = new UsersService(usersRepository);
+
+    if (!id) {
+      return response.status(404).json({
+        message: "Cannot route",
+      });
+    }
+
+    try {
+      const user = await usersService.getUser(id);
+      return response.status(200).json(user);
+    } catch (error) {
+      return response.status(500).json({
+        message: "Internal server error",
+      });
+    }
   }
 }

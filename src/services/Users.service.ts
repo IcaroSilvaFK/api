@@ -35,4 +35,9 @@ export class UsersService {
   async updateImage(image: string, id: string) {
     return this.userRepository.updateImage({ image, id });
   }
+  async getUser(id: string) {
+    const user = await this.userRepository.getUser(id);
+
+    return user;
+  }
 }

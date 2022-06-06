@@ -19,6 +19,7 @@ model User{
   name  String
   tweet       Tweet[]
   likeds      Likeds[]
+  posts_saveds PostSaved[]
   @@map("users")
 }
 
@@ -32,7 +33,8 @@ model Tweet{
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
   likeds    Likeds?
-  
+  post_saved PostSaved[]
+
   @@map("tweets")
 }
 
@@ -43,4 +45,16 @@ model Likeds{
   quantity  Int @default(0)
   tweet     Tweet @relation(fields: [tweet_id], references: [id])
   user      User @relation(fields: [user_id], references: [id])
+
+  @@map("likeds")
+}
+
+model PostSaved{
+  id String @id @default(uuid())
+  user_id String
+  user User @relation(fields: [user_id], references: [id])
+  post_id String
+  post Tweet @relation(fields: [post_id],references: [id])
+
+  @@map("posts_saved")
 }

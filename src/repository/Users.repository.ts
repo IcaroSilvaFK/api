@@ -1,6 +1,6 @@
 import { prisma } from "../prisma/prisma";
 import bcrypt from "bcrypt";
-import { AppError } from "../errors/App.error";
+
 import { client } from "../configs/cloudinary";
 interface INewUser {
   username: string;
@@ -64,6 +64,23 @@ export class UsersRepository {
         avatarUrl: true,
       },
     });
+    return user;
+  }
+  async getUser(id: string) {
+    const user = await prisma.user.findFirst({
+      where: {
+        id,
+      },
+      select: {
+        email: true,
+        id: true,
+        userName: true,
+        avatarUrl: true,
+        name: true,
+        createdAt: true,
+      },
+    });
+
     return user;
   }
 }

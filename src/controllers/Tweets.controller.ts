@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import jwt from "jsonwebtoken";
 import { TweetsRepository } from "../repository/Tweets.repository";
 import { TweetsService } from "../services/Tweets.service";
 
@@ -7,20 +6,17 @@ const KEY = process.env.KEY;
 
 export class TweetsController {
   static async create(request: Request, response: Response) {
-    const { token, tweet } = request.body;
+    const { id, tweet } = request.body;
     const tweetsRepository = new TweetsRepository();
     const tweetsService = new TweetsService(tweetsRepository);
 
-    if (!token || !tweet) {
+    if (!tweet) {
       return response.status(400).json({
         message: "Id or Tweet as missing a type",
       });
     }
 
     try {
-      const { id }: jwt.UserIDJwtPayload = <jwt.UserIDJwtPayload>(
-        jwt.verify(token, KEY as string)
-      );
       const newTweet = await tweetsService.create({
         id,
         tweet,
@@ -43,8 +39,8 @@ export class TweetsController {
 
       return response.status(200).json(tweets);
     } catch (error) {
-      return response.status(500).json({
-        message: "Internal server error",
+      return response.status(401).json({
+        message: "Unauthorized",
       });
     }
   }
