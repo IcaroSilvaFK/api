@@ -1,8 +1,7 @@
+import { Prisma } from "@prisma/client";
 import { Request, Response } from "express";
 import { TweetsRepository } from "../repository/Tweets.repository";
 import { TweetsService } from "../services/Tweets.service";
-
-const KEY = process.env.KEY;
 
 export class TweetsController {
   static async create(request: Request, response: Response) {
@@ -39,9 +38,12 @@ export class TweetsController {
 
       return response.status(200).json(tweets);
     } catch (error) {
-      return response.status(401).json({
-        message: "Unauthorized",
-      });
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        return response.status(500).json({
+          message: error.message,
+          code: error.code,
+        });
+      }
     }
   }
 }

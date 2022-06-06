@@ -16,17 +16,13 @@ interface IUserImage {
 
 type ILogin = Pick<INewUser, "email">;
 
-const SALT = 10;
-
 export class UsersRepository {
   async create({ email, username, password, name }: INewUser) {
-    const hashPassword = await bcrypt.hash(password, SALT);
-
     const user = await prisma.user.create({
       data: {
         email,
         userName: username,
-        password: hashPassword,
+        password,
         name,
       },
       select: {

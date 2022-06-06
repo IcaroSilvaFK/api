@@ -13,13 +13,11 @@ export class UserController {
     const { email, username, password, name } = request.body;
     const usersRepository = new UsersRepository();
     const usersService = new UsersService(usersRepository);
-
     if (!email || !username || !password || !name) {
       return response.status(400).json({
         message: "Email or Username as missing a type",
       });
     }
-
     try {
       const user = await usersService.create({
         email,
@@ -27,7 +25,8 @@ export class UserController {
         password,
         name,
       });
-
+      console.log("a");
+      console.log(user);
       const token = jwt.sign(
         {
           id: user?.id,

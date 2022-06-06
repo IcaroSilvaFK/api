@@ -11,11 +11,21 @@ interface INewUser {
 }
 
 type UserLogin = Omit<INewUser, "username" | "name">;
+const SALT = 10;
 export class UsersService {
   constructor(private readonly userRepository: UsersRepository) {}
 
   async create({ email, username, password, name }: INewUser) {
-    return this.userRepository.create({ email, username, password, name });
+    const hashPassword = await bcrypt.hash(password, SALT);
+
+    const user = await this.userRepository.create({
+      email,
+      username,
+      password: hashPassword,
+      name,
+    });
+    console.log(user);
+    return user;
   }
 
   async login({ email, password }: UserLogin) {
@@ -27,7 +37,7 @@ export class UsersService {
     const userMatchPassword = await bcrypt.compare(password, user.password!);
 
     if (!userMatchPassword) {
-      throw new AppError("Password or email is incorret", 400);
+      throw new AppError("Password or email is incorret", 401);
     }
     return user;
   }
