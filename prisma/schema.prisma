@@ -10,16 +10,17 @@ datasource db {
 
 
 model User{
-  id          String @id @default(uuid())
-  email       String @unique
-  avatarUrl   String? 
-  password  String
-  createdAt DateTime @default(now()) @map("created_at")
-  userName    String @map("user_name") @unique
-  name  String
-  tweet       Tweet[]
-  likeds      Likeds[]
-  posts_saveds PostSaved[]
+  id              String @id @default(uuid())
+  email           String @unique
+  avatarUrl       String? 
+  password        String
+  createdAt       DateTime @default(now()) @map("created_at")
+  userName        String @map("user_name") @unique
+  name            String
+  tweet           Tweet[]
+  likeds          Likeds[]
+  posts_saveds    PostSaved[]
+  refresh_token   RefreshToken?
   @@map("users")
 }
 
@@ -29,20 +30,20 @@ model Tweet{
   tweet     String
   user_id   String
 
-  user      User @relation(fields: [user_id], references: [id])
-  createdAt DateTime @default(now()) @map("created_at")
-  updatedAt DateTime @updatedAt @map("updated_at")
-  likeds    Likeds?
-  post_saved PostSaved[]
+  user        User @relation(fields: [user_id], references: [id])
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  likeds      Likeds[]
+  post_saved  PostSaved[]
 
   @@map("tweets")
 }
 
 model Likeds{
   id        String @id @default(uuid())
-  user_id   String
+  user_id   String 
   tweet_id  String
-  quantity  Int @default(0)
+  isLiked  Boolean @default(false)
   tweet     Tweet @relation(fields: [tweet_id], references: [id])
   user      User @relation(fields: [user_id], references: [id])
 
@@ -50,11 +51,21 @@ model Likeds{
 }
 
 model PostSaved{
-  id String @id @default(uuid())
-  user_id String
-  user User @relation(fields: [user_id], references: [id])
-  post_id String
-  post Tweet @relation(fields: [post_id],references: [id])
+  id          String @id @default(uuid())
+  user_id     String
+  user        User @relation(fields: [user_id], references: [id])
+  post_id     String
+  post        Tweet @relation(fields: [post_id],references: [id])
 
   @@map("posts_saved")
+}
+
+model RefreshToken{
+  id          String @id @default(uuid())
+  userId      String @map("user_id")
+  expiresIn   Int @map("expires_in")
+
+  user        User @relation(fields: [userId], references: [id])
+
+  @@map("refresh_token")
 }

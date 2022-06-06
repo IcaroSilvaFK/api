@@ -19,7 +19,6 @@ export class TweetsRepository {
   async getAll() {
     const tweets = await prisma.tweet.findMany({
       include: {
-        likeds: true,
         user: {
           select: {
             avatarUrl: true,
@@ -30,9 +29,21 @@ export class TweetsRepository {
             createdAt: true,
           },
         },
+        likeds: {
+          select: {
+            isLiked: true,
+            user_id: true,
+            tweet_id: true,
+            id: true,
+          },
+        },
+        _count: {
+          select: {
+            likeds: true,
+          },
+        },
       },
     });
-
     return tweets;
   }
 }
